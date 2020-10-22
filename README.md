@@ -11,4 +11,3 @@ Once you have your own API key you should add it as a new variable  called `Movi
 
 MovieApiKey="<YourApiKey>"
 ```
-
