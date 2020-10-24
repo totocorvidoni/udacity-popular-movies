@@ -22,10 +22,16 @@ import java.net.URL;
 import java.util.List;
 
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterViewHolder> {
-    private JSONArray mMoviesData;
+    public interface PosterItemClickListener {
+        void onPosterItemClick(int clickedPosterIndex);
+    }
 
-    public PosterAdapter(JSONArray moviesData) {
+    private JSONArray mMoviesData;
+    private PosterItemClickListener mOnClickListener;
+
+    public PosterAdapter(JSONArray moviesData, PosterItemClickListener listener) {
         mMoviesData = moviesData;
+        mOnClickListener = listener;
     }
 
     @NonNull
@@ -53,21 +59,27 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         return mMoviesData.length();
     }
 
-    class PosterViewHolder extends RecyclerView.ViewHolder {
+    class PosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private static final String TAG = "PosterViewHolder";
         ImageView listItemPosterView;
 
         public PosterViewHolder(View itemView) {
             super(itemView);
             listItemPosterView = (ImageView) itemView.findViewById(R.id.iv_poster);
+            itemView.setOnClickListener(this);
         }
 
         void bind(int listIndex) throws JSONException {
             JSONObject movieData = mMoviesData.getJSONObject(listIndex);
             String posterPath = movieData.getString("poster_path");
             URL imageUrl = NetworkUtils.buildPosterImageUrl(posterPath);
-            Log.i(TAG, "bind: " + imageUrl);
             Picasso.get().load(String.valueOf(imageUrl)).into(listItemPosterView);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int clickedPosition = getAdapterPosition();
+            mOnClickListener.onPosterItemClick(clickedPosition);
         }
     }
 }

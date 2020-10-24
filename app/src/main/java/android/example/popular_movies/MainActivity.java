@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.content.Context;
+import android.content.Intent;
 import android.example.popular_movies.utilities.NetworkUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,8 +19,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
-    private static final int NUM_LIST_ITEMS = 100;
+public class MainActivity extends AppCompatActivity implements PosterAdapter.PosterItemClickListener {
     private PosterAdapter mAdapter;
     private RecyclerView mPosterList;
 
@@ -28,14 +29,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         makePopularMoviesQuery();
-
-        mPosterList = (RecyclerView) findViewById(R.id.rv_posters);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        mPosterList.setLayoutManager(layoutManager);
-
-        mPosterList.setHasFixedSize(true);
-
-
     }
 
     void makePopularMoviesQuery() {
@@ -46,6 +39,16 @@ public class MainActivity extends AppCompatActivity {
     void makeTopRatedMoviesQuery() {
         URL queryURL = NetworkUtils.buildDiscoverUrl("rating");
         new MoviesQueryTask().execute(queryURL);
+    }
+
+    @Override
+    public void onPosterItemClick(int clickedPosterIndex) {
+        Context context = MainActivity.this;
+        Class destinationActivity = MovieDetails.class;
+        Intent intent = new Intent(context, destinationActivity);
+
+        startActivity(intent);
+
     }
 
     public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
@@ -70,7 +73,12 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject response = new JSONObject(s);
                     JSONArray moviesData = response.getJSONArray("results");
 
-                    mAdapter = new PosterAdapter(moviesData);
+                    mPosterList = (RecyclerView) findViewById(R.id.rv_posters);
+                    StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                    mPosterList.setLayoutManager(layoutManager);
+
+                    mPosterList.setHasFixedSize(true);
+                    mAdapter = new PosterAdapter(moviesData, MainActivity.this);
                     mPosterList.setAdapter(mAdapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
