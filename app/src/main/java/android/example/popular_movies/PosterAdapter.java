@@ -1,21 +1,31 @@
 package android.example.popular_movies;
 
 import android.content.Context;
+import android.example.popular_movies.utilities.NetworkUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
 import java.util.List;
 
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterViewHolder> {
-    private int mNumberItems;
+    private JSONArray mMoviesData;
 
-    public PosterAdapter(int numberOfItems) {
-        mNumberItems = numberOfItems;
+    public PosterAdapter(JSONArray moviesData) {
+        mMoviesData = moviesData;
     }
 
     @NonNull
@@ -31,25 +41,33 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
 
     @Override
     public void onBindViewHolder(@NonNull PosterViewHolder holder, int position) {
-        holder.bind(position);
+        try {
+            holder.bind(position);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mNumberItems;
+        return mMoviesData.length();
     }
 
     class PosterViewHolder extends RecyclerView.ViewHolder {
-        TextView listItemPosterView;
+        private static final String TAG = "PosterViewHolder";
+        ImageView listItemPosterView;
 
         public PosterViewHolder(View itemView) {
             super(itemView);
-
-            listItemPosterView = (TextView) itemView.findViewById(R.id.poster_item);
+            listItemPosterView = (ImageView) itemView.findViewById(R.id.iv_poster);
         }
 
-        void bind(int listIndex) {
-            listItemPosterView.setText(String.valueOf(listIndex));
+        void bind(int listIndex) throws JSONException {
+            JSONObject movieData = mMoviesData.getJSONObject(listIndex);
+            String posterPath = movieData.getString("poster_path");
+            URL imageUrl = NetworkUtils.buildPosterImageUrl(posterPath);
+            Log.i(TAG, "bind: " + imageUrl);
+            Picasso.get().load(String.valueOf(imageUrl)).into(listItemPosterView);
         }
     }
 }

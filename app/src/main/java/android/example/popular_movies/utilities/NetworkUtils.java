@@ -16,15 +16,17 @@ import java.util.Scanner;
  */
 public class NetworkUtils {
     final static String BASE_URL = "https://api.themoviedb.org/3/";
+    final static String BASE_IMAGE_URL = "https://image.tmdb.org/t/p";
     final static String PARAM_API_KEY = "api_key";
     final static String PARAM_MINIMUM_RATING = "vote_average.gte";
     final static String PARAM_MINIMUM_VOTES = "vote_count.gte";
     final static String PARAM_SORT = "sort_by";
     final static String PATH_DISCOVER = "discover";
+    final static String PATH_IMAGE_SIZE = "w185";
     final static String PATH_MOVIE = "movie";
     final static String VALUE_API_KEY = BuildConfig.MovieApiKey;
     final static String VALUE_MINIMUM_RATING = "4";
-    final static String VALUE_MINIMUM_VOTES = "50";
+    final static String VALUE_MINIMUM_VOTES = "1000";
     final static String VALUE_SORT_POPULARITY = "popularity.desc";
     final static String VALUE_SORT_RATING = "vote_average.desc";
 
@@ -48,6 +50,22 @@ public class NetworkUtils {
         }
 
         Uri builtUri = uriBuilder.build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildPosterImageUrl(String filePath) {
+        Uri builtUri = Uri.parse(BASE_IMAGE_URL).buildUpon()
+                .appendPath(PATH_IMAGE_SIZE)
+                .appendEncodedPath(filePath)
+                .build();
 
         URL url = null;
         try {
