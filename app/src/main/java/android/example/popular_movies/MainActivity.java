@@ -11,6 +11,7 @@ import android.example.popular_movies.utilities.NetworkUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +29,11 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        makePopularMoviesQuery();
+        if (isOnline()) {
+            makePopularMoviesQuery();
+        } else {
+            Toast.makeText(getApplicationContext (), "Please check your internet connection and restart the app", Toast.LENGTH_LONG).show();
+        }
     }
 
     void makePopularMoviesQuery() {
@@ -53,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
 
     public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
         private static final String TAG = "MoviesQueryTask";
+
         @Override
         protected String doInBackground(URL... urls) {
             URL queryURL = urls[0];
@@ -85,5 +91,19 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                 }
             }
         }
+    }
+
+    // https://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-times-out
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }
