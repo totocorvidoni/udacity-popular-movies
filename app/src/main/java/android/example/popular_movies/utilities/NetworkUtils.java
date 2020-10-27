@@ -61,7 +61,7 @@ public class NetworkUtils {
         return url;
     }
 
-    public static URL buildPosterImageUrl(String filePath) {
+    public static URL buildImageUrl(String filePath) {
         Uri builtUri = Uri.parse(BASE_IMAGE_URL).buildUpon()
                 .appendPath(PATH_IMAGE_SIZE)
                 .appendEncodedPath(filePath)
@@ -101,5 +101,19 @@ public class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+    // https://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-times-out
+    public static boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

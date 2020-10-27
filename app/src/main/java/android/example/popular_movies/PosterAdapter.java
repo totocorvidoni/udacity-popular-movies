@@ -2,12 +2,10 @@ package android.example.popular_movies;
 
 import android.content.Context;
 import android.example.popular_movies.utilities.NetworkUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URL;
-import java.util.List;
 
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterViewHolder> {
     public interface PosterItemClickListener {
@@ -72,7 +69,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         void bind(int listIndex) throws JSONException {
             JSONObject movieData = mMoviesData.getJSONObject(listIndex);
             String posterPath = movieData.getString("poster_path");
-            URL imageUrl = NetworkUtils.buildPosterImageUrl(posterPath);
+            URL imageUrl = NetworkUtils.buildImageUrl(posterPath);
             Picasso.get().load(String.valueOf(imageUrl)).into(listItemPosterView);
         }
 

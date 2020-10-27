@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 public class MovieData implements Parcelable {
     private String title;
-    private String poster;
+    private String posterPath;
     private String overview;
     private double voteAverage;
     private String releaseDate;
@@ -16,7 +16,7 @@ public class MovieData implements Parcelable {
     public MovieData(JSONObject data) {
         try {
             this.title = data.getString("title");
-            this.poster = data.getString("poster_path");
+            this.posterPath = data.getString("poster_path");
             this.overview = data.getString("overview");
             this.voteAverage = data.getDouble("vote_average");
             this.releaseDate = data.getString("release_date");
@@ -27,7 +27,7 @@ public class MovieData implements Parcelable {
 
     public MovieData(Parcel in) {
         this.title = in.readString();
-        this.poster = in.readString();
+        this.posterPath = in.readString();
         this.overview = in.readString();
         this.voteAverage = in.readDouble();
         this.releaseDate = in.readString();
@@ -37,40 +37,20 @@ public class MovieData implements Parcelable {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getPoster() {
-        return poster;
-    }
-
-    public void setPoster(String poster) {
-        this.poster = poster;
+    public String getPosterPath() {
+        return posterPath;
     }
 
     public String getOverview() {
         return overview;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
-
     public double getVoteAverage() {
         return voteAverage;
     }
 
-    public void setVoteAverage(double voteAverage) {
-        this.voteAverage = voteAverage;
-    }
-
     public String getReleaseDate() {
         return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
     }
 
     public int describeContents() {
@@ -91,7 +71,7 @@ public class MovieData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.title);
-        dest.writeString(this.poster);
+        dest.writeString(this.posterPath);
         dest.writeString(this.overview);
         dest.writeDouble(this.voteAverage);
         dest.writeString(this.releaseDate);
