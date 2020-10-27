@@ -2,7 +2,6 @@ package android.example.popular_movies.utilities;
 
 import android.example.popular_movies.BuildConfig;
 import android.net.Uri;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;

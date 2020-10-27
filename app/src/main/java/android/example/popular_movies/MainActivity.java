@@ -2,7 +2,6 @@ package android.example.popular_movies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -12,7 +11,6 @@ import android.example.popular_movies.modules.MovieData;
 import android.example.popular_movies.utilities.NetworkUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -25,8 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements PosterAdapter.PosterItemClickListener {
-    private PosterAdapter mAdapter;
-    private RecyclerView mPosterList;
     private JSONArray moviesData;
 
     @Override
@@ -51,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         } else if (clickedItemId == R.id.action_sort_top) {
             makeTopRatedMoviesQuery();
         }
+
         return true;
     }
 
@@ -113,12 +110,12 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                     JSONObject response = new JSONObject(s);
                     moviesData = response.getJSONArray("results");
 
-                    mPosterList = (RecyclerView) findViewById(R.id.rv_posters);
+                    RecyclerView mPosterList = findViewById(R.id.rv_posters);
                     StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                     mPosterList.setLayoutManager(layoutManager);
 
                     mPosterList.setHasFixedSize(true);
-                    mAdapter = new PosterAdapter(moviesData, MainActivity.this);
+                    PosterAdapter mAdapter = new PosterAdapter(moviesData, MainActivity.this);
                     mPosterList.setAdapter(mAdapter);
                 } catch (JSONException e) {
                     e.printStackTrace();

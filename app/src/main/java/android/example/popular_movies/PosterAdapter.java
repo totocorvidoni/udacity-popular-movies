@@ -23,8 +23,8 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         void onPosterItemClick(int clickedPosterIndex);
     }
 
-    private JSONArray mMoviesData;
-    private PosterItemClickListener mOnClickListener;
+    private final JSONArray mMoviesData;
+    private final PosterItemClickListener mOnClickListener;
 
     public PosterAdapter(JSONArray moviesData, PosterItemClickListener listener) {
         mMoviesData = moviesData;
@@ -58,11 +58,11 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
 
     class PosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private static final String TAG = "PosterViewHolder";
-        ImageView listItemPosterView;
+        final ImageView listItemPosterView;
 
         public PosterViewHolder(View itemView) {
             super(itemView);
-            listItemPosterView = (ImageView) itemView.findViewById(R.id.iv_poster);
+            listItemPosterView = itemView.findViewById(R.id.iv_poster);
             itemView.setOnClickListener(this);
         }
 
