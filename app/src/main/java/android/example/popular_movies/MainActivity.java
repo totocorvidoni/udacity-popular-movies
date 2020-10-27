@@ -1,5 +1,6 @@
 package android.example.popular_movies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +13,8 @@ import android.example.popular_movies.utilities.NetworkUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -31,21 +34,42 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (NetworkUtils.isOnline()) {
+        makePopularMoviesQuery();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.sort, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int clickedItemId = item.getItemId();
+        if (clickedItemId == R.id.action_sort_popular) {
             makePopularMoviesQuery();
-        } else {
-            Toast.makeText(getApplicationContext (), "Please check your internet connection and restart the app", Toast.LENGTH_LONG).show();
+        } else if (clickedItemId == R.id.action_sort_top) {
+            makeTopRatedMoviesQuery();
         }
+        return true;
     }
 
     void makePopularMoviesQuery() {
-        URL queryURL = NetworkUtils.buildDiscoverUrl("popularity");
-        new MoviesQueryTask().execute(queryURL);
+        if (NetworkUtils.isOnline()) {
+            URL queryURL = NetworkUtils.buildDiscoverUrl("popularity");
+            new MoviesQueryTask().execute(queryURL);
+        } else {
+            Toast.makeText(getApplicationContext(), "Please check your internet connection and restart the app", Toast.LENGTH_LONG).show();
+        }
     }
 
     void makeTopRatedMoviesQuery() {
-        URL queryURL = NetworkUtils.buildDiscoverUrl("rating");
-        new MoviesQueryTask().execute(queryURL);
+        if (NetworkUtils.isOnline()) {
+            URL queryURL = NetworkUtils.buildDiscoverUrl("rating");
+            new MoviesQueryTask().execute(queryURL);
+        } else {
+            Toast.makeText(getApplicationContext(), "Please check your internet connection and restart the app", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

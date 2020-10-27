@@ -4,4 +4,6 @@
     <string name="details_activity_label">Movie Details</string>
     <string name="movie_backdrop_description">Movie Backdrop</string>
     <string name="details_movie_poster_description">Movie Poster</string>
+    <string name="action_sort_popular_title">Popular</string>
+    <string name="action_sort_popular_top">Top</string>
 </resources>
