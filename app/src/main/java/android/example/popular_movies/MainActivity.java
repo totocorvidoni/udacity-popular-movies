@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        makePopularMoviesQuery();
+        makeMoviesQuery("popular");
     }
 
     @Override
@@ -43,26 +43,17 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int clickedItemId = item.getItemId();
         if (clickedItemId == R.id.action_sort_popular) {
-            makePopularMoviesQuery();
+            makeMoviesQuery("popular");
         } else if (clickedItemId == R.id.action_sort_top) {
-            makeTopRatedMoviesQuery();
+            makeMoviesQuery("rating");
         }
 
         return true;
     }
 
-    void makePopularMoviesQuery() {
+    void makeMoviesQuery(String sortBy) {
         if (NetworkUtils.isOnline()) {
-            URL queryURL = NetworkUtils.buildDiscoverUrl("popularity");
-            new MoviesQueryTask().execute(queryURL);
-        } else {
-            Toast.makeText(getApplicationContext(), "Please check your internet connection and restart the app", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    void makeTopRatedMoviesQuery() {
-        if (NetworkUtils.isOnline()) {
-            URL queryURL = NetworkUtils.buildDiscoverUrl("rating");
+            URL queryURL = NetworkUtils.buildDiscoverUrl(sortBy);
             new MoviesQueryTask().execute(queryURL);
         } else {
             Toast.makeText(getApplicationContext(), "Please check your internet connection and restart the app", Toast.LENGTH_LONG).show();
