@@ -14,41 +14,25 @@ import java.util.Scanner;
  * These utilities will be used to communicate with the network.
  */
 public class NetworkUtils {
-    final static String BASE_URL = "https://api.themoviedb.org/3/";
+    final static String BASE_URL = "https://api.themoviedb.org/3/movie";
     final static String BASE_IMAGE_URL = "https://image.tmdb.org/t/p";
     final static String PARAM_API_KEY = "api_key";
-    final static String PARAM_MINIMUM_RATING = "vote_average.gte";
-    final static String PARAM_MINIMUM_VOTES = "vote_count.gte";
-    final static String PARAM_SORT = "sort_by";
-    final static String PATH_DISCOVER = "discover";
     final static String PATH_IMAGE_SIZE = "w185";
-    final static String PATH_MOVIE = "movie";
     final static String VALUE_API_KEY = BuildConfig.MovieApiKey;
-    final static String VALUE_MINIMUM_RATING = "4";
-    final static String VALUE_MINIMUM_VOTES = "1000";
-    final static String VALUE_SORT_POPULARITY = "popularity.desc";
-    final static String VALUE_SORT_RATING = "vote_average.desc";
+    final static String PATH_POPULAR = "popular";
+    final static String PATH_RATING = "top_rated";
 
     public static URL buildDiscoverUrl(String sortBy) {
-        String sortValue;
+        String sortPath;
         if (sortBy.equals("rating")) {
-            sortValue = VALUE_SORT_RATING;
+            sortPath = PATH_RATING;
         } else {
-            sortValue = VALUE_SORT_POPULARITY;
+            sortPath = PATH_POPULAR;
         }
 
-        Uri.Builder uriBuilder = Uri.parse(BASE_URL).buildUpon()
-                .appendPath(PATH_DISCOVER)
-                .appendPath(PATH_MOVIE)
-                .appendQueryParameter(PARAM_API_KEY, VALUE_API_KEY)
-                .appendQueryParameter(PARAM_SORT, sortValue);
-
-        if (sortBy.equals("rating")) {
-            uriBuilder.appendQueryParameter(PARAM_MINIMUM_RATING, VALUE_MINIMUM_RATING)
-                    .appendQueryParameter(PARAM_MINIMUM_VOTES, VALUE_MINIMUM_VOTES);
-        }
-
-        Uri builtUri = uriBuilder.build();
+        Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(sortPath)
+                .appendQueryParameter(PARAM_API_KEY, VALUE_API_KEY).build();
 
         URL url = null;
         try {

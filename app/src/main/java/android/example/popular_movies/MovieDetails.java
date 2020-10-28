@@ -62,6 +62,4 @@ public class MovieDetails extends AppCompatActivity {
         TextView overviewView = findViewById(R.id.tv_details_overview);
         overviewView.setText(mMovieData.getOverview());
     }
-
-
 }
