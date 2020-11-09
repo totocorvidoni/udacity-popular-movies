@@ -44,6 +44,14 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildMovieVideosUrl(String movieId) {
+        return buildMovieExtraResourceUrl(movieId, "videos");
+    }
+
+    public static URL buildMovieReviewsUrl(String movieId) {
+        return buildMovieExtraResourceUrl(movieId, "reviews");
+    }
+
     public static URL buildImageUrl(String filePath) {
         Uri builtUri = Uri.parse(BASE_IMAGE_URL).buildUpon()
                 .appendPath(PATH_IMAGE_SIZE)
@@ -57,6 +65,18 @@ public class NetworkUtils {
             e.printStackTrace();
         }
 
+        return url;
+    }
+
+    private static URL buildMovieExtraResourceUrl(String movieId, String resourceName) {
+        Uri builtUri = Uri.parse(BASE_URL).buildUpon().appendPath(movieId).appendPath(resourceName).build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         return url;
     }
 
