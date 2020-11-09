@@ -45,12 +45,12 @@ public class MovieData implements Parcelable {
         return overview;
     }
 
-    public double getVoteAverage() {
-        return voteAverage;
+    public String getVoteAverage() {
+        return voteAverage + " / 10";
     }
 
     public String getReleaseDate() {
-        return releaseDate;
+        return releaseDate.substring(0, 4);
     }
 
     public int describeContents() {
