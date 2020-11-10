@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MovieData implements Parcelable {
+    private String id;
     private String title;
     private String posterPath;
     private String overview;
@@ -15,6 +16,7 @@ public class MovieData implements Parcelable {
 
     public MovieData(JSONObject data) {
         try {
+            this.id = data.getString("id");
             this.title = data.getString("title");
             this.posterPath = data.getString("poster_path");
             this.overview = data.getString("overview");
@@ -26,11 +28,16 @@ public class MovieData implements Parcelable {
     }
 
     public MovieData(Parcel in) {
+        this.id = in.readString();
         this.title = in.readString();
         this.posterPath = in.readString();
         this.overview = in.readString();
         this.voteAverage = in.readDouble();
         this.releaseDate = in.readString();
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -70,6 +77,7 @@ public class MovieData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
         dest.writeString(this.title);
         dest.writeString(this.posterPath);
         dest.writeString(this.overview);

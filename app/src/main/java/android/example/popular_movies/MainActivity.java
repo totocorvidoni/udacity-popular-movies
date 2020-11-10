@@ -11,6 +11,7 @@ import android.example.popular_movies.modules.MovieData;
 import android.example.popular_movies.utilities.NetworkUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements PosterAdapter.PosterItemClickListener {
+    private static final String TAG = "MainActivity";
     private JSONArray moviesData;
 
     @Override
@@ -84,14 +86,14 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         @Override
         protected String doInBackground(URL... urls) {
             URL queryURL = urls[0];
-            String movieResults = null;
+            String posterResults = null;
             try {
-                movieResults = NetworkUtils.getResponseFromHttpUrl(queryURL);
+                posterResults = NetworkUtils.getResponseFromHttpUrl(queryURL);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return movieResults;
+            return posterResults;
         }
 
         @Override

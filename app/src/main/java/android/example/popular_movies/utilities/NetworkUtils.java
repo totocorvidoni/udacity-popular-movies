@@ -16,6 +16,7 @@ import java.util.Scanner;
 public class NetworkUtils {
     final static String BASE_URL = "https://api.themoviedb.org/3/movie";
     final static String BASE_IMAGE_URL = "https://image.tmdb.org/t/p";
+    final static String BASE_YOUTUBE_URL = "https://www.youtube.com/watch";
     final static String PARAM_API_KEY = "api_key";
     final static String PATH_IMAGE_SIZE = "w185";
     final static String VALUE_API_KEY = BuildConfig.MovieApiKey;
@@ -34,22 +35,25 @@ public class NetworkUtils {
                 .appendPath(sortPath)
                 .appendQueryParameter(PARAM_API_KEY, VALUE_API_KEY).build();
 
-        URL url = null;
-        try {
-            url = new URL(builtUri.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        return url;
+        return makeUrlFromUri(builtUri);
     }
 
     public static URL buildMovieVideosUrl(String movieId) {
-        return buildMovieExtraResourceUrl(movieId, "videos");
+        Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(movieId)
+                .appendPath("videos")
+                .appendQueryParameter(PARAM_API_KEY, VALUE_API_KEY)
+                .build();
+        return makeUrlFromUri(builtUri);
     }
 
     public static URL buildMovieReviewsUrl(String movieId) {
-        return buildMovieExtraResourceUrl(movieId, "reviews");
+        Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+                .appendPath(movieId)
+                .appendPath("reviews")
+                .appendQueryParameter(PARAM_API_KEY, VALUE_API_KEY)
+                .build();
+        return makeUrlFromUri(builtUri);
     }
 
     public static URL buildImageUrl(String filePath) {
@@ -68,12 +72,14 @@ public class NetworkUtils {
         return url;
     }
 
-    private static URL buildMovieExtraResourceUrl(String movieId, String resourceName) {
-        Uri builtUri = Uri.parse(BASE_URL).buildUpon().appendPath(movieId).appendPath(resourceName).build();
+    public static Uri buildTrailerUri(String key) {
+        return Uri.parse(BASE_YOUTUBE_URL).buildUpon().appendQueryParameter("v", key).build();
+    }
 
+    private static URL makeUrlFromUri(Uri uri) {
         URL url = null;
         try {
-            url = new URL(builtUri.toString());
+            url = new URL(uri.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
