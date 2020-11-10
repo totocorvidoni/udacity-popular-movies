@@ -4,7 +4,9 @@ import android.example.popular_movies.utilities.NetworkUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,11 +24,11 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
         void onTrailerItemClick(int clickedPosterIndex);
     }
 
-    private final JSONArray mMoviesData;
+    private final JSONArray mTrailersData;
     private final TrailerItemClickListener mOnClickListener;
 
-    public TrailerAdapter(JSONArray moviesData, TrailerItemClickListener listener) {
-        mMoviesData = moviesData;
+    public TrailerAdapter(JSONArray trailersData, TrailerItemClickListener listener) {
+        mTrailersData = trailersData;
         mOnClickListener = listener;
     }
 
@@ -52,27 +54,27 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
 
     @Override
     public int getItemCount() {
-        if (mMoviesData == null) {
+        if (mTrailersData == null) {
             return 0;
         }
-        return mMoviesData.length();
+        return mTrailersData.length();
     }
 
     class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private static final String TAG = "TrailerViewHolder";
-        final ImageView listItemPosterView;
+        TextView trailerNameTextView;
 
         public TrailerViewHolder(View itemView) {
             super(itemView);
-            listItemPosterView = itemView.findViewById(R.id.iv_poster);
+            trailerNameTextView = itemView.findViewById(R.id.tv_trailer_item_name);
             itemView.setOnClickListener(this);
         }
 
         void bind(int listIndex) throws JSONException {
-            JSONObject movieData = mMoviesData.getJSONObject(listIndex);
-            String posterPath = movieData.getString("poster_path");
-            URL imageUrl = NetworkUtils.buildImageUrl(posterPath);
-            Picasso.get().load(String.valueOf(imageUrl)).into(listItemPosterView);
+            JSONObject trailerData = mTrailersData.getJSONObject(listIndex);
+            String trailerName = trailerData.getString("name");
+
+            trailerNameTextView.setText(trailerName);
         }
 
         @Override
