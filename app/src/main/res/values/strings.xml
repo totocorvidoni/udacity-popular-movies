@@ -4,4 +4,5 @@
     <string name="details_movie_poster_description">Movie Poster</string>
     <string name="action_sort_popular_title">Popular</string>
     <string name="action_sort_popular_top">Top</string>
+    <string name="trailer_icon_description">A play icon</string>
 </resources>

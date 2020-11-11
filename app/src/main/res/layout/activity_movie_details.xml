@@ -75,13 +75,21 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_trailers"
-                android:layout_below="@id/tv_details_overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tv_details_overview"
                 android:layout_marginHorizontal="12dp"
-
+                android:nestedScrollingEnabled="false"
                 />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_reviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rv_trailers"
+                android:layout_marginHorizontal="12dp"
+                android:nestedScrollingEnabled="false"
+                />
         </RelativeLayout>
 
 

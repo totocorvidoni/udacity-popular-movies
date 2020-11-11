@@ -14,7 +14,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:adjustViewBounds="false"
-        android:contentDescription="a play icon"
+        android:contentDescription="@string/trailer_icon_description"
         android:paddingStart="12dp"
         app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
 

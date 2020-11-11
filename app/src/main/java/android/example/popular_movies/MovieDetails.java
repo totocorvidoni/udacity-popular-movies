@@ -28,9 +28,9 @@ import java.net.URL;
 public class MovieDetails extends AppCompatActivity implements TrailerAdapter.TrailerItemClickListener {
     private static final String TAG = "MovieDetails";
 
-    MovieData mMovieData;
-    ActivityMovieDetailsBinding mDetailsBinding;
-    JSONArray mTrailersData;
+    private MovieData mMovieData;
+    private ActivityMovieDetailsBinding mDetailsBinding;
+    private JSONArray mTrailersData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +47,10 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
 
         URL trailersUrl = NetworkUtils.buildMovieVideosUrl(mMovieData.getId());
         new FetchTrailersTask().execute(trailersUrl);
+
+        URL reviewsUrl = NetworkUtils.buildMovieReviewsUrl(mMovieData.getId());
+        Log.i(TAG, "onCreate: " + reviewsUrl);
+        new FetchReviewsTask().execute(reviewsUrl);
     }
 
     public void setPoster() {
@@ -99,6 +103,45 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
                     trailerList.setHasFixedSize(true);
                     TrailerAdapter adapter = new TrailerAdapter(mTrailersData, MovieDetails.this);
                     trailerList.setAdapter(adapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public class FetchReviewsTask extends AsyncTask<URL, Void, String> {
+        private static final String TAG = "FetchReviewsTask";
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            URL queryURL = urls[0];
+            String reviewResults = null;
+            try {
+                reviewResults = NetworkUtils.getResponseFromHttpUrl(queryURL);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return reviewResults;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (s != null && !s.equals("")) {
+                try {
+                    JSONObject response = new JSONObject(s);
+                    JSONArray reviewsData = response.getJSONArray("results");
+
+                    Log.i(TAG, "onPostExecute: " + reviewsData);
+
+                    RecyclerView reviewList = findViewById(R.id.rv_reviews);
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(MovieDetails.this);
+                    reviewList.setLayoutManager(layoutManager);
+
+                    reviewList.setHasFixedSize(true);
+                    ReviewAdapter adapter = new ReviewAdapter(reviewsData);
+                    reviewList.setAdapter(adapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
