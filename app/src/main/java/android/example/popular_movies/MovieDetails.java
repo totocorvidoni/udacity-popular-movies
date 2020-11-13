@@ -2,11 +2,13 @@ package android.example.popular_movies;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
+import android.example.popular_movies.database.AppDatabase;
 import android.example.popular_movies.databinding.ActivityMovieDetailsBinding;
 import android.example.popular_movies.modules.MovieData;
 import android.example.popular_movies.utilities.NetworkUtils;
@@ -14,6 +16,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -32,6 +36,11 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
     private ActivityMovieDetailsBinding mDetailsBinding;
     private JSONArray mTrailersData;
 
+    private Button mFavoriteButton;
+    private Button mDeleteButton;
+
+    private AppDatabase mDb;
+//
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,21 +52,77 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         mDetailsBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_details);
         mDetailsBinding.setMovie(mMovieData);
 
+        mDb = AppDatabase.getInstance(getApplicationContext());
+
         setPoster();
+        setFavoriteButton();
 
         URL trailersUrl = NetworkUtils.buildMovieVideosUrl(mMovieData.getId());
         new FetchTrailersTask().execute(trailersUrl);
 
         URL reviewsUrl = NetworkUtils.buildMovieReviewsUrl(mMovieData.getId());
-        Log.i(TAG, "onCreate: " + reviewsUrl);
         new FetchReviewsTask().execute(reviewsUrl);
     }
 
-    public void setPoster() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void setPoster() {
         ImageView posterView = findViewById(R.id.iv_details_poster);
         URL posterURL = NetworkUtils.buildImageUrl(mMovieData.getPosterPath());
 
         Picasso.get().load(String.valueOf(posterURL)).into(posterView);
+    }
+
+    private void setFavoriteButton() {
+        LiveData<MovieData> movie = mDb.favoriteMovieDAO().loadFavoriteById(mMovieData.getId());
+        Log.i(TAG, "setFavoriteButton: " + movie);
+        Button favoriteButton = findViewById(R.id.b_favorite_action);
+
+         movie.observe(this, new Observer<MovieData>() {
+            @Override
+            public void onChanged(MovieData movie) {
+                if (movie == null) {
+                    favoriteButton.setText(R.string.favorite_button_text);
+                    setAddFavoriteClickListener(favoriteButton);
+                } else {
+                    favoriteButton.setText(R.string.favorite_button_delete_text);
+                    setDeleteFavoriteClickListener(favoriteButton);
+                }
+            }
+        });
+    }
+
+    private void setAddFavoriteClickListener(Button button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDb.favoriteMovieDAO().insertFavorite(mMovieData);
+                    }
+                });
+
+            }
+        });
+    }
+
+    private void setDeleteFavoriteClickListener(Button button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDb.favoriteMovieDAO().deleteFavorite(mMovieData);
+                    }
+                });
+
+            }
+        });
     }
 
     @Override

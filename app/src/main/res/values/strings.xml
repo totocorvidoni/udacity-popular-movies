@@ -5,4 +5,6 @@
     <string name="action_sort_popular_title">Popular</string>
     <string name="action_sort_popular_top">Top</string>
     <string name="trailer_icon_description">A play icon</string>
+    <string name="favorite_button_text">Mark as Favorite</string>
+    <string name="favorite_button_delete_text">Unmark as Favorite</string>
 </resources>

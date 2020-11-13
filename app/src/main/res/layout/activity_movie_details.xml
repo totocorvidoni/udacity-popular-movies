@@ -64,6 +64,15 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/b_favorite_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_details_rating"
+                android:layout_marginTop="12dp"
+                android:layout_toEndOf="@id/iv_details_poster"
+                />
+
 
             <TextView
                 android:id="@+id/tv_details_overview"
@@ -79,8 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_details_overview"
                 android:layout_marginHorizontal="12dp"
-                android:nestedScrollingEnabled="false"
-                />
+                android:nestedScrollingEnabled="false" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_reviews"
@@ -88,8 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/rv_trailers"
                 android:layout_marginHorizontal="12dp"
-                android:nestedScrollingEnabled="false"
-                />
+                android:nestedScrollingEnabled="false" />
         </RelativeLayout>
 
 

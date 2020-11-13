@@ -3,36 +3,47 @@ package android.example.popular_movies.modules;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+@Entity(tableName = "favorite_movie")
 public class MovieData implements Parcelable {
+    @PrimaryKey @NonNull
     private String id;
     private String title;
     private String posterPath;
     private String overview;
-    private double voteAverage;
+    private String voteAverage;
     private String releaseDate;
 
+    public MovieData() { }
+
+    @Ignore
     public MovieData(JSONObject data) {
         try {
             this.id = data.getString("id");
             this.title = data.getString("title");
             this.posterPath = data.getString("poster_path");
             this.overview = data.getString("overview");
-            this.voteAverage = data.getDouble("vote_average");
+            this.voteAverage = data.getString("vote_average");
             this.releaseDate = data.getString("release_date");
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    @Ignore
     public MovieData(Parcel in) {
         this.id = in.readString();
         this.title = in.readString();
         this.posterPath = in.readString();
         this.overview = in.readString();
-        this.voteAverage = in.readDouble();
+        this.voteAverage = in.readString();
         this.releaseDate = in.readString();
     }
 
@@ -40,8 +51,32 @@ public class MovieData implements Parcelable {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public void setVoteAverage(String voteAverage) {
+        this.voteAverage = voteAverage;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     public String getPosterPath() {
@@ -81,7 +116,7 @@ public class MovieData implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.posterPath);
         dest.writeString(this.overview);
-        dest.writeDouble(this.voteAverage);
+        dest.writeString(this.voteAverage);
         dest.writeString(this.releaseDate);
     }
 }
