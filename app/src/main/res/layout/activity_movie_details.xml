@@ -22,7 +22,7 @@
                 android:id="@+id/tv_details_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/teal_700"
+                android:background="@color/black_700"
                 android:paddingHorizontal="24dp"
                 android:paddingTop="36dp"
                 android:paddingBottom="12dp"

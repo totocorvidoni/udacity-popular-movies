@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStore;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,11 +38,9 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
     private ActivityMovieDetailsBinding mDetailsBinding;
     private JSONArray mTrailersData;
 
-    private Button mFavoriteButton;
-    private Button mDeleteButton;
-
     private AppDatabase mDb;
-//
+
+    //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,11 +77,11 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
     }
 
     private void setFavoriteButton() {
-        LiveData<MovieData> movie = mDb.favoriteMovieDAO().loadFavoriteById(mMovieData.getId());
-        Log.i(TAG, "setFavoriteButton: " + movie);
+        MovieDetailsViewModelFactory factory = new MovieDetailsViewModelFactory(mDb, mMovieData.getId());
+        MovieDetailsViewModel viewModel = new ViewModelProvider(this, factory).get(MovieDetailsViewModel.class);
         Button favoriteButton = findViewById(R.id.b_favorite_action);
 
-         movie.observe(this, new Observer<MovieData>() {
+        viewModel.getMovie().observe(this, new Observer<MovieData>() {
             @Override
             public void onChanged(MovieData movie) {
                 if (movie == null) {
