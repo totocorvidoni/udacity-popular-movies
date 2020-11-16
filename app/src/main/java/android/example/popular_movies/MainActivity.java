@@ -2,12 +2,15 @@ package android.example.popular_movies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.example.popular_movies.modules.MovieData;
+import android.example.popular_movies.database.AppDatabase;
+import android.example.popular_movies.modules.Movie;
 import android.example.popular_movies.utilities.NetworkUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,10 +25,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements PosterAdapter.PosterItemClickListener {
     private static final String TAG = "MainActivity";
-    private JSONArray moviesData;
+    private List<Movie> mMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
             makeMoviesQuery("popular");
         } else if (clickedItemId == R.id.action_sort_top) {
             makeMoviesQuery("rating");
+        } else if (clickedItemId == R.id.action_sort_favorite) {
+            fetchFavorites();
         }
 
         return true;
@@ -62,22 +69,38 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         }
     }
 
+    private void fetchFavorites() {
+        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+        LiveData<List<Movie>> favoriteMovies = db.favoriteMovieDAO().loadAllFavorites();
+        favoriteMovies.observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(List<Movie> movies) {
+                mMovies = movies;
+                Log.i(TAG, "fetchFavorites: " + mMovies);
+                mountMovies();
+            }
+        });
+    }
+
     @Override
     public void onPosterItemClick(int clickedPosterIndex) {
-        MovieData movieData = null;
-        try {
-            JSONObject movieDataObject = moviesData.getJSONObject(clickedPosterIndex);
-            movieData = new MovieData(movieDataObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        Movie movie = mMovies.get(clickedPosterIndex);
         Context context = MainActivity.this;
         Class destinationActivity = MovieDetails.class;
         Intent intent = new Intent(context, destinationActivity);
-        intent.putExtra("movieData", movieData);
+        intent.putExtra("movieData", movie);
 
         startActivity(intent);
+    }
+
+    private void mountMovies() {
+        RecyclerView mPosterList = findViewById(R.id.rv_posters);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        mPosterList.setLayoutManager(layoutManager);
+
+        mPosterList.setHasFixedSize(true);
+        PosterAdapter mAdapter = new PosterAdapter(mMovies, MainActivity.this);
+        mPosterList.setAdapter(mAdapter);
     }
 
     public class MoviesQueryTask extends AsyncTask<URL, Void, String> {
@@ -101,16 +124,18 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
             if (s != null && !s.equals("")) {
                 try {
                     JSONObject response = new JSONObject(s);
-                    moviesData = response.getJSONArray("results");
+                    JSONArray moviesData = response.getJSONArray("results");
 
-                    RecyclerView mPosterList = findViewById(R.id.rv_posters);
-                    StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                    mPosterList.setLayoutManager(layoutManager);
+                    List<Movie> movies = new ArrayList<>();
+                    for (int i = 0; i < moviesData.length(); i++) {
+                        Movie movie = new Movie(moviesData.getJSONObject(i));
+                        movies.add(movie);
+                    }
+                    mMovies = movies;
 
-                    mPosterList.setHasFixedSize(true);
-                    PosterAdapter mAdapter = new PosterAdapter(moviesData, MainActivity.this);
-                    mPosterList.setAdapter(mAdapter);
+                    mountMovies();
                 } catch (JSONException e) {
+                    Log.i(TAG, "onPostExecute: Error Happened");
                     e.printStackTrace();
                 }
             }

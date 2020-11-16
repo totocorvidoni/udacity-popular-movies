@@ -2,17 +2,15 @@ package android.example.popular_movies;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.example.popular_movies.database.AppDatabase;
 import android.example.popular_movies.databinding.ActivityMovieDetailsBinding;
-import android.example.popular_movies.modules.MovieData;
+import android.example.popular_movies.modules.Movie;
 import android.example.popular_movies.utilities.NetworkUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -34,7 +32,7 @@ import java.net.URL;
 public class MovieDetails extends AppCompatActivity implements TrailerAdapter.TrailerItemClickListener {
     private static final String TAG = "MovieDetails";
 
-    private MovieData mMovieData;
+    private Movie mMovie;
     private ActivityMovieDetailsBinding mDetailsBinding;
     private JSONArray mTrailersData;
 
@@ -47,20 +45,20 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         setContentView(R.layout.activity_movie_details);
 
         Bundle data = getIntent().getExtras();
-        mMovieData = data.getParcelable("movieData");
+        mMovie = data.getParcelable("movieData");
 
         mDetailsBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_details);
-        mDetailsBinding.setMovie(mMovieData);
+        mDetailsBinding.setMovie(mMovie);
 
         mDb = AppDatabase.getInstance(getApplicationContext());
 
         setPoster();
         setFavoriteButton();
 
-        URL trailersUrl = NetworkUtils.buildMovieVideosUrl(mMovieData.getId());
+        URL trailersUrl = NetworkUtils.buildMovieVideosUrl(mMovie.getId());
         new FetchTrailersTask().execute(trailersUrl);
 
-        URL reviewsUrl = NetworkUtils.buildMovieReviewsUrl(mMovieData.getId());
+        URL reviewsUrl = NetworkUtils.buildMovieReviewsUrl(mMovie.getId());
         new FetchReviewsTask().execute(reviewsUrl);
     }
 
@@ -71,19 +69,19 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
 
     private void setPoster() {
         ImageView posterView = findViewById(R.id.iv_details_poster);
-        URL posterURL = NetworkUtils.buildImageUrl(mMovieData.getPosterPath());
+        URL posterURL = NetworkUtils.buildImageUrl(mMovie.getPosterPath());
 
         Picasso.get().load(String.valueOf(posterURL)).into(posterView);
     }
 
     private void setFavoriteButton() {
-        MovieDetailsViewModelFactory factory = new MovieDetailsViewModelFactory(mDb, mMovieData.getId());
+        MovieDetailsViewModelFactory factory = new MovieDetailsViewModelFactory(mDb, mMovie.getId());
         MovieDetailsViewModel viewModel = new ViewModelProvider(this, factory).get(MovieDetailsViewModel.class);
         Button favoriteButton = findViewById(R.id.b_favorite_action);
 
-        viewModel.getMovie().observe(this, new Observer<MovieData>() {
+        viewModel.getMovie().observe(this, new Observer<Movie>() {
             @Override
-            public void onChanged(MovieData movie) {
+            public void onChanged(Movie movie) {
                 if (movie == null) {
                     favoriteButton.setText(R.string.favorite_button_text);
                     setAddFavoriteClickListener(favoriteButton);
@@ -102,7 +100,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mDb.favoriteMovieDAO().insertFavorite(mMovieData);
+                        mDb.favoriteMovieDAO().insertFavorite(mMovie);
                     }
                 });
 
@@ -117,7 +115,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mDb.favoriteMovieDAO().deleteFavorite(mMovieData);
+                        mDb.favoriteMovieDAO().deleteFavorite(mMovie);
                     }
                 });
 

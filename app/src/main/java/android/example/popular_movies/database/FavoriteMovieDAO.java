@@ -1,6 +1,6 @@
 package android.example.popular_movies.database;
 
-import android.example.popular_movies.modules.MovieData;
+import android.example.popular_movies.modules.Movie;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -15,17 +15,17 @@ import java.util.List;
 @Dao
 public interface FavoriteMovieDAO {
     @Query("SELECT * FROM favorite_movie ORDER BY releaseDate")
-    LiveData<List<MovieData>> loadAllFavorites();
+    LiveData<List<Movie>> loadAllFavorites();
 
     @Query("SELECT * FROM favorite_movie WHERE id=:id")
-    LiveData<MovieData> loadFavoriteById(String id);
+    LiveData<Movie> loadFavoriteById(String id);
 
     @Insert
-    void insertFavorite(MovieData movieData);
+    void insertFavorite(Movie movie);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateFavorite(MovieData movieData);
+    void updateFavorite(Movie movie);
 
     @Delete
-    void deleteFavorite(MovieData movieData);
+    void deleteFavorite(Movie movie);
 }

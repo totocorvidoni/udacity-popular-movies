@@ -1,14 +1,14 @@
 package android.example.popular_movies.database;
 
 import android.content.Context;
-import android.example.popular_movies.modules.MovieData;
+import android.example.popular_movies.modules.Movie;
 import android.util.Log;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {MovieData.class}, version = 3, exportSchema = false)
+@Database(entities = {Movie.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String TAG = "AppDatabase";
     private static final Object LOCK = new Object();

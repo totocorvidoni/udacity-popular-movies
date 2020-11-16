@@ -1,6 +1,7 @@
 package android.example.popular_movies;
 
 import android.content.Context;
+import android.example.popular_movies.modules.Movie;
 import android.example.popular_movies.utilities.NetworkUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,22 +13,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URL;
+import java.util.List;
 
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterViewHolder> {
     public interface PosterItemClickListener {
         void onPosterItemClick(int clickedPosterIndex);
     }
 
-    private final JSONArray mMoviesData;
+    private final List<Movie> mMovies;
     private final PosterItemClickListener mOnClickListener;
 
-    public PosterAdapter(JSONArray moviesData, PosterItemClickListener listener) {
-        mMoviesData = moviesData;
+    public PosterAdapter(List<Movie> movies, PosterItemClickListener listener) {
+        mMovies = movies;
         mOnClickListener = listener;
     }
 
@@ -53,10 +53,10 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
 
     @Override
     public int getItemCount() {
-        if (mMoviesData == null) {
+        if (mMovies == null) {
             return 0;
         }
-        return mMoviesData.length();
+        return mMovies.size();
     }
 
     class PosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -70,8 +70,8 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
         }
 
         void bind(int listIndex) throws JSONException {
-            JSONObject movieData = mMoviesData.getJSONObject(listIndex);
-            String posterPath = movieData.getString("poster_path");
+            Movie movie = mMovies.get(listIndex);
+            String posterPath = movie.getPosterPath();
             URL imageUrl = NetworkUtils.buildImageUrl(posterPath);
             Picasso.get().load(String.valueOf(imageUrl)).into(listItemPosterView);
         }

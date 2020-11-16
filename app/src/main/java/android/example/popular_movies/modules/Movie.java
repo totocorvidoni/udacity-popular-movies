@@ -12,7 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 @Entity(tableName = "favorite_movie")
-public class MovieData implements Parcelable {
+public class Movie implements Parcelable {
     @PrimaryKey @NonNull
     private String id;
     private String title;
@@ -21,10 +21,10 @@ public class MovieData implements Parcelable {
     private String voteAverage;
     private String releaseDate;
 
-    public MovieData() { }
+    public Movie() { }
 
     @Ignore
-    public MovieData(JSONObject data) {
+    public Movie(JSONObject data) {
         try {
             this.id = data.getString("id");
             this.title = data.getString("title");
@@ -38,7 +38,7 @@ public class MovieData implements Parcelable {
     }
 
     @Ignore
-    public MovieData(Parcel in) {
+    public Movie(Parcel in) {
         this.id = in.readString();
         this.title = in.readString();
         this.posterPath = in.readString();
@@ -99,14 +99,14 @@ public class MovieData implements Parcelable {
         return 0;
     }
 
-    public static final Parcelable.Creator<MovieData> CREATOR
-            = new Parcelable.Creator<MovieData>() {
-        public MovieData createFromParcel(Parcel in) {
-            return new MovieData(in);
+    public static final Parcelable.Creator<Movie> CREATOR
+            = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
         }
 
-        public MovieData[] newArray(int size) {
-            return new MovieData[size];
+        public Movie[] newArray(int size) {
+            return new Movie[size];
         }
     };
 

@@ -6,7 +6,7 @@
 
         <variable
             name="movie"
-            type="android.example.popular_movies.modules.MovieData" />
+            type="android.example.popular_movies.modules.Movie" />
     </data>
 
     <ScrollView
@@ -37,7 +37,6 @@
                 android:layout_width="185dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_details_title"
-                android:layout_marginEnd="20dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/details_movie_poster_description"
                 android:padding="12dp"
@@ -50,6 +49,7 @@
                 android:layout_below="@+id/tv_details_title"
                 android:layout_marginTop="12dp"
                 android:layout_toEndOf="@id/iv_details_poster"
+                android:layout_marginEnd="12dp"
                 android:text="@{movie.releaseDate}"
                 android:textSize="28sp" />
 
@@ -60,6 +60,7 @@
                 android:layout_below="@+id/tv_details_release_year"
                 android:layout_marginTop="12dp"
                 android:layout_toEndOf="@id/iv_details_poster"
+                android:layout_marginEnd="12dp"
                 android:text="@{movie.voteAverage}"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -71,7 +72,7 @@
                 android:layout_below="@id/tv_details_rating"
                 android:layout_marginTop="12dp"
                 android:layout_toEndOf="@id/iv_details_poster"
-                />
+                android:layout_marginEnd="12dp" />
 
 
             <TextView

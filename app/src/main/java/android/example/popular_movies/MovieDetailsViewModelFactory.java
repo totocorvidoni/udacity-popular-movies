@@ -1,6 +1,5 @@
 package android.example.popular_movies;
 
-
 import android.example.popular_movies.database.AppDatabase;
 
 import androidx.annotation.NonNull;
@@ -18,6 +17,7 @@ public class MovieDetailsViewModelFactory extends ViewModelProvider.NewInstanceF
 
     @NonNull
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         return (T) new MovieDetailsViewModel(mDb, mId);
     }
