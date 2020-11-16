@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -30,14 +31,20 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements PosterAdapter.PosterItemClickListener {
     private static final String TAG = "MainActivity";
-    private List<Movie> mMovies;
+    private MainViewModel mMoviesViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mMoviesViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        makeMoviesQuery("popular");
+        if (mMoviesViewModel.getMovies() == null) {
+            makeMoviesQuery("popular");
+        } else {
+            mountMovies();
+        }
+
     }
 
     @Override
@@ -75,8 +82,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         favoriteMovies.observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> movies) {
-                mMovies = movies;
-                Log.i(TAG, "fetchFavorites: " + mMovies);
+                mMoviesViewModel.setMovies(movies);
                 mountMovies();
             }
         });
@@ -84,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
 
     @Override
     public void onPosterItemClick(int clickedPosterIndex) {
-        Movie movie = mMovies.get(clickedPosterIndex);
+        Movie movie = mMoviesViewModel.getMovies().get(clickedPosterIndex);
         Context context = MainActivity.this;
         Class destinationActivity = MovieDetails.class;
         Intent intent = new Intent(context, destinationActivity);
@@ -99,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
         mPosterList.setLayoutManager(layoutManager);
 
         mPosterList.setHasFixedSize(true);
-        PosterAdapter mAdapter = new PosterAdapter(mMovies, MainActivity.this);
+        PosterAdapter mAdapter = new PosterAdapter(mMoviesViewModel.getMovies(), MainActivity.this);
         mPosterList.setAdapter(mAdapter);
     }
 
@@ -131,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements PosterAdapter.Pos
                         Movie movie = new Movie(moviesData.getJSONObject(i));
                         movies.add(movie);
                     }
-                    mMovies = movies;
+                    mMoviesViewModel.setMovies(movies);
 
                     mountMovies();
                 } catch (JSONException e) {

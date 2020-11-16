@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 public class MovieDetailsViewModel extends ViewModel {
-    private LiveData<Movie> movie;
+    final private LiveData<Movie> movie;
 
     public MovieDetailsViewModel(AppDatabase database, String id) {
         movie = database.favoriteMovieDAO().loadFavoriteById(id);
